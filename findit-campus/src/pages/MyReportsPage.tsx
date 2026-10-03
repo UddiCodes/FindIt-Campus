@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Calendar, Package } from 'lucide-react';
-import { getItems, getClaimsByUser } from '../store';
+import { MapPin, Calendar, Package, Trash2 } from 'lucide-react';
+import { getItems, getClaimsByUser, deleteItem } from '../store';
 import type { User, Item, Claim } from '../types';
 
 interface MyReportsPageProps {
@@ -43,34 +43,77 @@ export default function MyReportsPage({ user }: MyReportsPageProps) {
   };
 
   function ItemRow({ item }: { item: Item }) {
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleDelete = async () => {
+      if (!window.confirm('Are you sure you want to delete this report?')) {
+        return;
+      }
+      
+      setIsDeleting(true);
+      setError(null);
+      
+      try {
+        const success = await deleteItem(item.id, item.imagePath);
+        if (success) {
+          if (item.type === 'lost') {
+            setMyLost(prev => prev.filter(i => i.id !== item.id));
+          } else {
+            setMyFound(prev => prev.filter(i => i.id !== item.id));
+          }
+        } else {
+          setError('Failed to delete report. Please try again.');
+        }
+      } catch (err) {
+        setError('An unexpected error occurred.');
+      } finally {
+        setIsDeleting(false);
+      }
+    };
+
     return (
-      <Link
-        to={`/item/${item.id}`}
-        className="flex items-start gap-4 py-4 border-b border-[#DDDDD8] hover:bg-[#EEEEEA] -mx-4 px-4 transition-colors group"
-      >
-        <div className="w-14 h-14 shrink-0 bg-[#EEEEEA] overflow-hidden">
-          {item.imagePath ? (
-            <img src={item.imagePath} alt={item.name} className="w-full h-full object-cover" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-[#6B6C6A]">
-              <Package size={18} strokeWidth={1.5} />
-            </div>
-          )}
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[#6B6C6A] mb-0.5">{item.category}</p>
-          <p className="font-display font-semibold text-[#171817] text-sm group-hover:underline truncate">{item.name}</p>
-          <div className="flex gap-3 mt-1">
-            <span className="flex items-center gap-1 text-xs text-[#6B6C6A]"><MapPin size={10} />{item.location}</span>
-            <span className="flex items-center gap-1 text-xs text-[#6B6C6A]"><Calendar size={10} />{item.date}</span>
+      <div className="relative border-b border-[#DDDDD8] -mx-4 px-4 hover:bg-[#EEEEEA] transition-colors group flex items-start gap-4 py-4">
+        <Link to={`/item/${item.id}`} className="shrink-0">
+          <div className="w-14 h-14 bg-[#EEEEEA] overflow-hidden">
+            {item.imagePath ? (
+              <img src={item.imagePath} alt={item.name} className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-[#6B6C6A]">
+                <Package size={18} strokeWidth={1.5} />
+              </div>
+            )}
           </div>
+        </Link>
+        <div className="flex-1 min-w-0">
+          <Link to={`/item/${item.id}`} className="block">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-[#6B6C6A] mb-0.5">{item.category}</p>
+            <p className="font-display font-semibold text-[#171817] text-sm group-hover:underline truncate">{item.name}</p>
+            <div className="flex gap-3 mt-1">
+              <span className="flex items-center gap-1 text-xs text-[#6B6C6A]"><MapPin size={10} />{item.location}</span>
+              <span className="flex items-center gap-1 text-xs text-[#6B6C6A]"><Calendar size={10} />{item.date}</span>
+            </div>
+          </Link>
+          {error && <p className="text-xs text-red-600 mt-2">{error}</p>}
         </div>
-        <span className={`shrink-0 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 ${
-          item.status === 'active' ? 'bg-[#C5F36B] text-[#171817]' : item.status === 'returned' ? 'bg-[#171817] text-[#F5F5F0]' : 'bg-[#EEEEEA] text-[#6B6C6A]'
-        }`}>
-          {item.status}
-        </span>
-      </Link>
+        
+        <div className="shrink-0 flex flex-col items-end gap-2">
+          <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 ${
+            item.status === 'active' ? 'bg-[#C5F36B] text-[#171817]' : item.status === 'returned' ? 'bg-[#171817] text-[#F5F5F0]' : 'bg-[#EEEEEA] text-[#6B6C6A]'
+          }`}>
+            {item.status}
+          </span>
+          <button
+            onClick={handleDelete}
+            disabled={isDeleting}
+            className={`p-1.5 text-[#6B6C6A] hover:text-red-600 hover:bg-red-50 transition-colors rounded ${isDeleting ? 'opacity-50 cursor-not-allowed' : ''}`}
+            title="Delete report"
+            aria-label="Delete report"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
+      </div>
     );
   }
 

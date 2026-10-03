@@ -116,6 +116,23 @@ export async function getItemById(id: string): Promise<Item | undefined> {
   return mapItem(data);
 }
 
+export async function deleteItem(id: string, imagePath?: string | null): Promise<boolean> {
+  if (imagePath) {
+    const fileName = imagePath.split('/').pop();
+    if (fileName) {
+      const { error: storageError } = await supabase.storage.from('items').remove([fileName]);
+      if (storageError) console.error('Error deleting image:', storageError);
+    }
+  }
+
+  const { error } = await supabase.from('items').delete().eq('id', id);
+  if (error) {
+    console.error('Error deleting item:', error);
+    return false;
+  }
+  return true;
+}
+
 // ─── Claims ──────────────────────────────────────────────────────────────────
 
 function mapClaim(row: any): Claim {
