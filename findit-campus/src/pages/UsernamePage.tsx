@@ -65,7 +65,7 @@ export default function UsernamePage() {
           });
 
           if (signInErr) {
-            setInfo('Account created! If email confirmation is enabled in your Supabase project, please check your email inbox to confirm your account, or turn off "Confirm email" in Supabase Dashboard -> Authentication -> Providers -> Email.');
+            setInfo('Account created! Please check your email inbox to confirm your account before signing in.');
           }
         }
       } else {
