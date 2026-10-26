@@ -26,7 +26,7 @@ export default function SettingsPage({ user, onUpdate, onLogout }: SettingsPageP
       .eq('id', user.id);
 
     if (updateError) {
-      setError(updateError.message);
+      setError(updateError.code === '23505' ? 'That username is already taken.' : updateError.message);
       return;
     }
 

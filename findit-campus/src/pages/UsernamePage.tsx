@@ -15,10 +15,10 @@ export default function UsernamePage() {
     e.preventDefault();
     setError('');
     setInfo('');
-    
+
     const trimEmail = email.trim();
     const trimPass = password.trim();
-    
+
     if (!trimEmail || !trimPass) {
       setError('Email and password are required.');
       return;
@@ -54,7 +54,7 @@ export default function UsernamePage() {
             }
           }
         });
-        
+
         if (signUpError) {
           setError(signUpError.message);
         } else if (signUpData.user && !signUpData.session) {
@@ -117,9 +117,8 @@ export default function UsernamePage() {
                   value={email}
                   onChange={(e) => { setEmail(e.target.value); setError(''); setInfo(''); }}
                   placeholder="name@university.edu"
-                  className={`w-full px-4 py-3 text-sm bg-white border ${
-                    error ? 'border-red-400' : 'border-[#DDDDD8]'
-                  } focus:border-[#171817] outline-none text-[#171817] placeholder:text-[#6B6C6A] transition-colors`}
+                  className={`w-full px-4 py-3 text-sm bg-white border ${error ? 'border-red-400' : 'border-[#DDDDD8]'
+                    } focus:border-[#171817] outline-none text-[#171817] placeholder:text-[#6B6C6A] transition-colors`}
                 />
               </div>
 
@@ -135,9 +134,8 @@ export default function UsernamePage() {
                     onChange={(e) => { setUsername(e.target.value); setError(''); setInfo(''); }}
                     placeholder="e.g. priya_sharma"
                     maxLength={31}
-                    className={`w-full px-4 py-3 text-sm bg-white border ${
-                      error ? 'border-red-400' : 'border-[#DDDDD8]'
-                    } focus:border-[#171817] outline-none text-[#171817] placeholder:text-[#6B6C6A] transition-colors`}
+                    className={`w-full px-4 py-3 text-sm bg-white border ${error ? 'border-red-400' : 'border-[#DDDDD8]'
+                      } focus:border-[#171817] outline-none text-[#171817] placeholder:text-[#6B6C6A] transition-colors`}
                   />
                 </div>
               )}
@@ -152,9 +150,8 @@ export default function UsernamePage() {
                   value={password}
                   onChange={(e) => { setPassword(e.target.value); setError(''); setInfo(''); }}
                   placeholder="•••••••• (min 6 characters)"
-                  className={`w-full px-4 py-3 text-sm bg-white border ${
-                    error ? 'border-red-400' : 'border-[#DDDDD8]'
-                  } focus:border-[#171817] outline-none text-[#171817] placeholder:text-[#6B6C6A] transition-colors`}
+                  className={`w-full px-4 py-3 text-sm bg-white border ${error ? 'border-red-400' : 'border-[#DDDDD8]'
+                    } focus:border-[#171817] outline-none text-[#171817] placeholder:text-[#6B6C6A] transition-colors`}
                 />
               </div>
             </div>
@@ -170,7 +167,7 @@ export default function UsernamePage() {
                 <CheckCircle size={14} className="shrink-0 mt-0.5 text-blue-600" /> <span>{info}</span>
               </p>
             )}
-            
+
             <button
               id="auth-continue-btn"
               type="submit"
@@ -183,7 +180,7 @@ export default function UsernamePage() {
 
           <p className="text-sm text-center text-[#6B6C6A] mt-6">
             {isSignUp ? 'Already have an account? ' : 'Don\'t have an account? '}
-            <button 
+            <button
               onClick={() => { setIsSignUp(!isSignUp); setError(''); setInfo(''); }}
               className="font-semibold text-[#171817] hover:underline"
             >
